@@ -7,6 +7,8 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using EncriptionCore.Data;
+
 
 namespace Encription
 {
@@ -14,37 +16,19 @@ namespace Encription
     {
         static void Main(string[] args)
         {
-            EncriptionProvider client = new RsaEncriptionProvider(EncriptionProvider.ReadCert(ReadFile(@"cert\EgyptAC.pfx"), "Edrfo2018"));
-            EncriptionProvider sender = new RsaEncriptionProvider(EncriptionProvider.ReadCert(ReadFile(@"cert\EgyptAC.cer")));
 
-            byte[] data = sender.EncryptText("test");
+            //LoadCertAndKeyType();
 
-            Console.WriteLine(BitConverter.ToString(data));
+            //RsaTest();
 
-            string text = client.DecryptText(data);
+            //AesTest();
 
-            Console.WriteLine(text);
-            Console.ReadLine();
-
-            test1();
+            RsaStreamTest();
 
             Console.ReadKey();
         }
 
-        private static byte[] ReadFile(string fileName)
-        {
-            using (FileStream f = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-            {
-                int size = (int)f.Length;
-                byte[] data = new byte[size];
-                size = f.Read(data, 0, size);
-                return data;
-            }
-        }
-
-
-
-        static void test() 
+        static void AesTest()
         {
             string original = "Hello world!";
 
@@ -53,7 +37,7 @@ namespace Encription
                 var key = new byte[16];
                 random.GetBytes(key);
 
-                byte[] encrypted = AesEncription.EncryptText(original,key);
+                byte[] encrypted = AesEncription.EncryptText(original, key);
 
                 string decrypted = AesEncription.DecryptText(encrypted, key);
 
@@ -62,11 +46,25 @@ namespace Encription
                 Console.WriteLine("Key:   {0}", Convert.ToBase64String(key));
                 Console.WriteLine("Encrypted (b64-encode): {0}", Convert.ToBase64String(encrypted));
                 Console.WriteLine("Round Trip: {0}", decrypted);
-              
+
             }
         }
 
-        static void test1()
+        static void RsaTest()
+        {
+            EncriptionProvider encription = new RsaEncriptionProvider(EncriptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0]);
+
+            byte[] data = encription.EncryptText("Hello world!");
+
+            Console.WriteLine(BitConverter.ToString(data));
+
+            string text = encription.DecryptText(data);
+
+            Console.WriteLine(text);
+            Console.ReadLine();
+        }
+
+        static void RsaStreamTest()
         {
 
             using (var random = new RNGCryptoServiceProvider())
@@ -78,18 +76,24 @@ namespace Encription
                 {
                     using (MemoryStream original = new MemoryStream(AesEncription.StringToBytes("Hello world!")))
                     {
-                        AesEncription.Encrypt1(original, in encrypted, key);
+                        AesEncription.Encrypt1(original, encrypted, key);
 
                         string decrypted = AesEncription.DecryptText(((MemoryStream)encrypted).ToArray(), key);
 
 
+                        // X509KeyStorageFlags
 
-                      
                     }
                 }
 
 
             }
+        }
+
+        static void LoadCertAndKeyType()
+        {
+            X509Certificate2 cert = EncriptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0];
+            KeyType keyType = EncriptionProvider.GetCertificateType(cert);
         }
     }
 }

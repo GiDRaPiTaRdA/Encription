@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,9 +43,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AesEncription.cs" />
+    <Compile Include="Data\KeyType.cs" />
     <Compile Include="EncriptionProvider.cs" />
     <Compile Include="RsaEncriptionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Cert\MakeCert.bat" />
+    <None Include="Cert\res\Makecert missing from Windows 10 and Visual Studio 2015 install- - Stack Overflow.url" />
+    <None Include="Cert\res\MakeCert.rar" />
+    <None Include="Cert\res\makesert.bat" />
+    <None Include="Cert\res\makesert.rar" />
+    <None Include="Cert\res\Windows 10 SDK - Windows app development.url" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Cert\Certificates\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

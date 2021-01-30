@@ -122,14 +122,14 @@ namespace EncriptionCore
             return bytes;
         }
 
-        public static byte[] Encrypt(byte[] data, byte[] Key)
+        public static byte[] Encrypt(byte[] data, byte[] key)
         {
             byte[] encrypted;
             byte[] IV;
 
             using (Aes aesAlg = Aes.Create())
             {
-                aesAlg.Key = Key;
+                aesAlg.Key = key;
 
                 aesAlg.GenerateIV();
                 IV = aesAlg.IV;
@@ -205,7 +205,7 @@ namespace EncriptionCore
 
 
 
-        public static void Encrypt1(Stream data, in Stream encrypted, byte[] Key)
+        public static void Encrypt1(Stream data, Stream encrypted, byte[] Key)
         {
             byte[] IV;
 
