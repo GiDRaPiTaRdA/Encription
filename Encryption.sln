@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encription", "Encription\Encription.csproj", "{BCA15C08-D70B-471E-B553-90704B0E0414}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncryptionCore", "EncryptionCore\EncryptionCore.csproj", "{31970D15-3731-4FC3-ACA2-0A68A64EA8C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncriptionCore", "EncriptionCore\EncriptionCore.csproj", "{31970D15-3731-4FC3-ACA2-0A68A64EA8C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encryption", "Encryption\Encryption.csproj", "{BCA15C08-D70B-471E-B553-90704B0E0414}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BCA15C08-D70B-471E-B553-90704B0E0414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCA15C08-D70B-471E-B553-90704B0E0414}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCA15C08-D70B-471E-B553-90704B0E0414}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCA15C08-D70B-471E-B553-90704B0E0414}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31970D15-3731-4FC3-ACA2-0A68A64EA8C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31970D15-3731-4FC3-ACA2-0A68A64EA8C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31970D15-3731-4FC3-ACA2-0A68A64EA8C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31970D15-3731-4FC3-ACA2-0A68A64EA8C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCA15C08-D70B-471E-B553-90704B0E0414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCA15C08-D70B-471E-B553-90704B0E0414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCA15C08-D70B-471E-B553-90704B0E0414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCA15C08-D70B-471E-B553-90704B0E0414}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

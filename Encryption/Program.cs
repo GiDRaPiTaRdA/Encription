@@ -1,22 +1,16 @@
-﻿using EncriptionCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using EncriptionCore.Data;
+using EncryptionCore.Data;
+using EncryptionCore;
 
-
-namespace Encription
+namespace Encryption
 {
     class Program
     {
         static void Main(string[] args)
         {
-
             //LoadCertAndKeyType();
 
             //RsaTest();
@@ -37,9 +31,9 @@ namespace Encription
                 var key = new byte[16];
                 random.GetBytes(key);
 
-                byte[] encrypted = AesEncription.EncryptText(original, key);
+                byte[] encrypted = AesEncryption.EncryptText(original, key);
 
-                string decrypted = AesEncription.DecryptText(encrypted, key);
+                string decrypted = AesEncryption.DecryptText(encrypted, key);
 
                 //Display the original data and the decrypted data.
                 Console.WriteLine("Original:   {0}", original);
@@ -52,7 +46,7 @@ namespace Encription
 
         static void RsaTest()
         {
-            EncriptionProvider encription = new RsaEncriptionProvider(EncriptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0]);
+            EncryptionProvider encription = new RsaEncryptionProvider(EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0]);
 
             byte[] data = encription.EncryptText("Hello world!");
 
@@ -74,11 +68,11 @@ namespace Encription
 
                 using (Stream encrypted = new MemoryStream())
                 {
-                    using (MemoryStream original = new MemoryStream(AesEncription.StringToBytes("Hello world!")))
+                    using (MemoryStream original = new MemoryStream(AesEncryption.StringToBytes("Hello world!")))
                     {
-                        AesEncription.Encrypt1(original, encrypted, key);
+                        AesEncryption.Encrypt1(original, encrypted, key);
 
-                        string decrypted = AesEncription.DecryptText(((MemoryStream)encrypted).ToArray(), key);
+                        string decrypted = AesEncryption.DecryptText(((MemoryStream)encrypted).ToArray(), key);
 
 
                         // X509KeyStorageFlags
@@ -92,8 +86,8 @@ namespace Encription
 
         static void LoadCertAndKeyType()
         {
-            X509Certificate2 cert = EncriptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0];
-            KeyType keyType = EncriptionProvider.GetCertificateType(cert);
+            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0];
+            KeyType keyType = EncryptionProvider.GetCertificateType(cert);
         }
     }
 }

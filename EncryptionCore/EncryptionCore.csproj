@@ -7,8 +7,8 @@
     <ProjectGuid>{31970D15-3731-4FC3-ACA2-0A68A64EA8C5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EncriptionCore</RootNamespace>
-    <AssemblyName>EncriptionCore</AssemblyName>
+    <RootNamespace>EncryptionCore</RootNamespace>
+    <AssemblyName>EncryptionCore</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -42,10 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AesEncription.cs" />
+    <Compile Include="AesEncryption.cs" />
     <Compile Include="Data\KeyType.cs" />
-    <Compile Include="EncriptionProvider.cs" />
-    <Compile Include="RsaEncriptionProvider.cs" />
+    <Compile Include="EncryptionProvider.cs" />
+    <Compile Include="RsaEncryptionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

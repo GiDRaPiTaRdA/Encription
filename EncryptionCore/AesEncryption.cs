@@ -6,9 +6,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EncriptionCore
+namespace EncryptionCore
 {
-    public class AesEncription
+    public class AesEncryption
     {
         public static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key)
         {
@@ -97,7 +97,7 @@ namespace EncriptionCore
 
         }
 
-        public static byte[] EncryptText(string data, byte[] key)=>
+        public static byte[] EncryptText(string data, byte[] key) =>
             Encrypt(StringToBytes(data), key);
 
 

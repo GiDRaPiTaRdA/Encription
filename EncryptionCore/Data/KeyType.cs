@@ -1,4 +1,4 @@
-﻿namespace EncriptionCore.Data
+﻿namespace EncryptionCore.Data
 {
     public enum KeyType
     {

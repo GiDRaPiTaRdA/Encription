@@ -7,15 +7,15 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using EncriptionCore.Data;
+using EncryptionCore.Data;
 
-namespace EncriptionCore
+namespace EncryptionCore
 {
-    public abstract class EncriptionProvider
+    public abstract class EncryptionProvider
     {
         protected X509Certificate2 cert;
 
-        public EncriptionProvider(X509Certificate2 cert)
+        public EncryptionProvider(X509Certificate2 cert)
         {
             this.cert = cert;
         }

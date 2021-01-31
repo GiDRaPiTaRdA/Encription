@@ -7,15 +7,15 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EncriptionCore
+namespace EncryptionCore
 {
-    public class RsaEncriptionProvider : EncriptionProvider
+    public class RsaEncryptionProvider : EncryptionProvider
     {
         private RSAEncryptionPadding padding;
 
-        public RsaEncriptionProvider(X509Certificate2 cert):this(cert, RSAEncryptionPadding.OaepSHA1) { }
+        public RsaEncryptionProvider(X509Certificate2 cert):this(cert, RSAEncryptionPadding.OaepSHA1) { }
 
-        public RsaEncriptionProvider(X509Certificate2 cert, RSAEncryptionPadding padding):base(cert)
+        public RsaEncryptionProvider(X509Certificate2 cert, RSAEncryptionPadding padding):base(cert)
         {
             this.padding = padding;
         }

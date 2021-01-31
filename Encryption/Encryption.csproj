@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BCA15C08-D70B-471E-B553-90704B0E0414}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Encription</RootNamespace>
-    <AssemblyName>Encription</AssemblyName>
+    <RootNamespace>Encryption</RootNamespace>
+    <AssemblyName>Encryption</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -51,9 +51,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EncriptionCore\EncriptionCore.csproj">
+    <ProjectReference Include="..\EncryptionCore\EncryptionCore.csproj">
       <Project>{31970d15-3731-4fc3-aca2-0a68a64ea8c5}</Project>
-      <Name>EncriptionCore</Name>
+      <Name>EncryptionCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
