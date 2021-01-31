@@ -43,8 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AesEncryption.cs" />
+    <Compile Include="CertificateBasedEncription.cs" />
     <Compile Include="Data\KeyType.cs" />
     <Compile Include="EncryptionProvider.cs" />
+    <Compile Include="RsaAesEncription.cs" />
     <Compile Include="RsaEncryptionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

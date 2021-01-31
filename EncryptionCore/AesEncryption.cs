@@ -97,12 +97,90 @@ namespace EncryptionCore
 
         }
 
+
         public static byte[] EncryptText(string data, byte[] key) =>
             Encrypt(StringToBytes(data), key);
 
-
         public static string DecryptText(byte[] cipherTextCombined, byte[] key) =>
             BytesToString(Decrypt(cipherTextCombined, key));
+
+
+        public static byte[] Encrypt(byte[] data, byte[] key)
+        {
+            using (MemoryStream dataStream = new MemoryStream(data))
+            {
+                using (MemoryStream encryptStream = new MemoryStream())
+                {
+                    EncryptStream(dataStream, encryptStream, key);
+
+                    return encryptStream.ToArray(); ;
+                }
+            }
+        }
+
+        public static byte[] Decrypt(byte[] encriptedData, byte[] key)
+        {
+            using (MemoryStream dataStream = new MemoryStream(encriptedData))
+            {
+                using (MemoryStream encryptStream = new MemoryStream())
+                {
+                    DecryptStream(encryptStream, dataStream, key);
+
+                    return dataStream.ToArray();
+                }
+            }
+        }
+
+
+        public static void EncryptStream(Stream dataStream, Stream encryptStream, byte[] key)
+        {
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = key;
+                aesAlg.GenerateIV();
+
+                aesAlg.Mode = CipherMode.CBC;
+
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                using (CryptoStream cryptoStream = new CryptoStream(encryptStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
+                {
+                    encryptStream.Write(aesAlg.IV, 0, aesAlg.IV.Length);    // IV
+                    dataStream.CopyTo(cryptoStream);                        // encrypt
+                    //cryptoStream.FlushFinalBlock();
+                }
+            }
+        }
+
+        public static void DecryptStream(Stream encryptedStream, Stream dataStream, byte[] Key)
+        {
+            // Create an Aes object 
+            // with the specified key and IV. 
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+
+                byte[] IV = new byte[aesAlg.BlockSize / 8];
+
+                //encryptedStream.Position = 0;
+                encryptedStream.Read(buffer: IV, offset: 0, count: IV.Length);     // obtain IV  
+
+                aesAlg.IV = IV;
+
+                aesAlg.Mode = CipherMode.CBC;
+
+                // Create a decrytor to perform the stream transform.
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                encryptedStream.Position = IV.Length;
+                using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read, leaveOpen: false))
+                {
+                    cryptoStream.CopyTo(dataStream);                               // decrypt
+                    //cryptoStream.FlushFinalBlock();
+                }
+            }
+        }
+
 
         public static string BytesToString(byte[] bytes)
         {
@@ -122,168 +200,17 @@ namespace EncryptionCore
             return bytes;
         }
 
-        public static byte[] Encrypt(byte[] data, byte[] key)
+        public static byte[] GenerateKey()
         {
-            byte[] encrypted;
-            byte[] IV;
-
-            using (Aes aesAlg = Aes.Create())
+            // Generate key
+            byte[] key;
+            using (RNGCryptoServiceProvider random = new RNGCryptoServiceProvider())
             {
-                aesAlg.Key = key;
-
-                aesAlg.GenerateIV();
-                IV = aesAlg.IV;
-
-                aesAlg.Mode = CipherMode.CBC;
-
-                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-
-                // Create the streams used for encryption. 
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        cryptoStream.Write(data, 0, data.Length);
-                        cryptoStream.FlushFinalBlock();
-                        encrypted = memoryStream.ToArray();
-                    }
-                }
+                key = new byte[16];
+                random.GetBytes(key);
             }
 
-            var combinedIvCt = new byte[IV.Length + encrypted.Length];
-            Array.Copy(IV, 0, combinedIvCt, 0, IV.Length);
-            Array.Copy(encrypted, 0, combinedIvCt, IV.Length, encrypted.Length);
-
-            // Return the encrypted bytes from the memory stream. 
-            return combinedIvCt;
-        }
-
-        public static byte[] Decrypt(byte[] cipherTextCombined, byte[] Key)
-        {
-
-            // Declare the string used to hold 
-            // the decrypted text. 
-            byte[] plaintext = null;
-
-            // Create an Aes object 
-            // with the specified key and IV. 
-            using (Aes aesAlg = Aes.Create())
-            {
-                aesAlg.Key = Key;
-
-                byte[] IV = new byte[aesAlg.BlockSize / 8];
-                byte[] cipherText = new byte[cipherTextCombined.Length - IV.Length];
-
-                Array.Copy(cipherTextCombined, IV, IV.Length);
-                Array.Copy(cipherTextCombined, IV.Length, cipherText, 0, cipherText.Length);
-
-                aesAlg.IV = IV;
-
-                aesAlg.Mode = CipherMode.CBC;
-
-                // Create a decrytor to perform the stream transform.
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-                // Create the streams used for decryption. 
-                using (var msDecrypt = new MemoryStream(cipherText))
-                {
-                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (var srDecrypt = new MemoryStream())
-                        {
-                            csDecrypt.CopyTo(srDecrypt);
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            plaintext = srDecrypt.ToArray();
-                        }
-                    }
-                }
-            }
-
-            return plaintext;
-        }
-
-
-
-        public static void Encrypt1(Stream data, Stream encrypted, byte[] Key)
-        {
-            byte[] IV;
-
-            using (Aes aesAlg = Aes.Create())
-            {
-                aesAlg.Key = Key;
-
-                aesAlg.GenerateIV();
-                IV = aesAlg.IV;
-
-                aesAlg.Mode = CipherMode.CBC;
-
-                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-
-                // Create the streams used for encryption. 
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        data.CopyTo(cryptoStream);
-                        memoryStream.CopyTo(encrypted);
-                    }
-                }
-            }
-
-            byte[] combinedIvCt = new byte[IV.Length + encrypted.Length];
-
-
-
-
-            //Array.Copy(IV, 0, combinedIvCt, 0, IV.Length);
-            //Array.Copy(encrypted, 0, combinedIvCt, IV.Length, encrypted.Length);
-
-        }
-
-        public static byte[] Decrypt1(byte[] cipherTextCombined, byte[] Key)
-        {
-
-            // Declare the string used to hold 
-            // the decrypted text. 
-            byte[] plaintext = null;
-
-            // Create an Aes object 
-            // with the specified key and IV. 
-            using (Aes aesAlg = Aes.Create())
-            {
-                aesAlg.Key = Key;
-
-                byte[] IV = new byte[aesAlg.BlockSize / 8];
-                byte[] cipherText = new byte[cipherTextCombined.Length - IV.Length];
-
-                Array.Copy(cipherTextCombined, IV, IV.Length);
-                Array.Copy(cipherTextCombined, IV.Length, cipherText, 0, cipherText.Length);
-
-                aesAlg.IV = IV;
-
-                aesAlg.Mode = CipherMode.CBC;
-
-                // Create a decrytor to perform the stream transform.
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-                // Create the streams used for decryption. 
-                using (var msDecrypt = new MemoryStream(cipherText))
-                {
-                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (var srDecrypt = new MemoryStream())
-                        {
-                            csDecrypt.CopyTo(srDecrypt);
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            plaintext = srDecrypt.ToArray();
-                        }
-                    }
-                }
-            }
-
-            return plaintext;
+            return key;
         }
     }
 }

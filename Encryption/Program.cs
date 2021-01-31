@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using EncryptionCore.Data;
 using EncryptionCore;
+using System.Diagnostics;
 
 namespace Encryption
 {
@@ -17,7 +18,11 @@ namespace Encryption
 
             //AesTest();
 
-            RsaStreamTest();
+            //AesStreamTest();
+
+            //AesBigDataStreamTest();
+
+            RsaAesBigDataStreamTest();
 
             Console.ReadKey();
         }
@@ -58,36 +63,92 @@ namespace Encryption
             Console.ReadLine();
         }
 
-        static void RsaStreamTest()
+        static void AesStreamTest()
         {
-
             using (var random = new RNGCryptoServiceProvider())
             {
                 var key = new byte[16];
                 random.GetBytes(key);
 
-                using (Stream encrypted = new MemoryStream())
+                using (MemoryStream encrypted = new MemoryStream())
                 {
-                    using (MemoryStream original = new MemoryStream(AesEncryption.StringToBytes("Hello world!")))
+                    byte[] dataIn = AesEncryption.StringToBytes("Hello world!");
+
+                    using (MemoryStream original = new MemoryStream(dataIn))
                     {
-                        AesEncryption.Encrypt1(original, encrypted, key);
+                        using (MemoryStream decripted = new MemoryStream())
+                        {
+                            AesEncryption.EncryptStream(original, encrypted, key);
 
-                        string decrypted = AesEncryption.DecryptText(((MemoryStream)encrypted).ToArray(), key);
+                            AesEncryption.DecryptStream(encrypted, decripted, key);
 
+                            string decrypted = AesEncryption.BytesToString(decripted.ToArray());
 
-                        // X509KeyStorageFlags
-
+                            //string decrypted = AesEncryption.DecryptText(encrypted.ToArray(), key);
+                        }
                     }
                 }
-
-
             }
         }
 
+
+        static void AesBigDataStreamTest()
+        {
+            Stopwatch s = Stopwatch.StartNew();
+
+            byte[] key;
+            using (RNGCryptoServiceProvider random = new RNGCryptoServiceProvider())
+            {
+                key = new byte[16];
+                random.GetBytes(key);
+            }
+
+            using (FileStream original = File.Open(@"data\data.rar", FileMode.Open))
+            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Create))
+            {
+                AesEncryption.EncryptStream(original, encrypted, key);
+            }
+
+            Console.WriteLine($"Encryption in {s.ElapsedMilliseconds}");
+            s.Restart();
+
+            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Open))
+            using (FileStream decripted = File.Open(@"data\decripted.rar", FileMode.Create))
+            {
+                AesEncryption.DecryptStream(encrypted, decripted, key);
+            }
+
+            Console.WriteLine($"Decryption in {s.ElapsedMilliseconds}");
+
+        }
+
+        static void RsaAesBigDataStreamTest()
+        {
+            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
+
+            using (FileStream original = File.Open(@"data\data.rar", FileMode.Open))
+            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Create))
+            {
+                rsaAesEncription.EncryptStream(original,encrypted);
+            }
+
+            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Open))
+            using (FileStream decripted = File.Open(@"data\decripted.rar", FileMode.Create))
+            {
+                rsaAesEncription.DecryptStream(encrypted, decripted);
+            }
+        }
+
+
         static void LoadCertAndKeyType()
         {
-            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0];
-            KeyType keyType = EncryptionProvider.GetCertificateType(cert);
+            KeyType keyType = EncryptionProvider.GetCertificateType(LoadCert());
+        }
+
+        static X509Certificate2 LoadCert()
+        {
+            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "EgyptAC")[0];
+            return cert;
         }
     }
 }
