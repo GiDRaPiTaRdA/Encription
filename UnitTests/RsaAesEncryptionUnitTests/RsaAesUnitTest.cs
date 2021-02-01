@@ -1,29 +1,22 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using EncryptionCore.Data;
+﻿
 using EncryptionCore;
+using NUnit.Framework;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using UnitTestTools;
 
-namespace Encryption
+namespace RsaAesEncryptionUnitTests
 {
-    class Program
+    [TestFixture]
+    public class RsaAesUnitTest
     {
-        static void Main(string[] args)
-        {
-            //LoadCertAndKeyType();
+        public string original = "Hello world!";
 
-            //RsaTest();
-
-            //RsaAesStreamTest();
-
-            RsaAesBigDataStreamTest();
-
-            Console.ReadKey();
-        }
-
-        public static void RsaAesBigDataStreamTest()
+        [Test]
+        public void RsaAesBigDataStreamTest()
         {
             Stopwatch s = Stopwatch.StartNew();
 
@@ -31,7 +24,7 @@ namespace Encryption
 
             string path = AppDomain.CurrentDomain.BaseDirectory;
 
-            string dir = $@"{path}data";
+            string dir = $@"{path}data\rsaaes";
             string dataFile = $@"{dir}\Video.rar";
             string extention = Path.GetExtension(dataFile);
 
@@ -55,8 +48,38 @@ namespace Encryption
                 rsaAesEncription.DecryptStream(encrypted, decripted);
             }
 
+            // Check
+            using (FileStream original = File.Open(dataFile, FileMode.Open))
+            using (FileStream decripted = File.Open(decriptedFile, FileMode.Open))
+            {
+                if (original.Length != decripted.Length)
+                {
+                    Assert.Fail($"Decripted and original streams have different length, original: {original.Length} decrypted: {decripted.Length}");
+                }
+                else
+                {
+                    Assertions.CompareHash(original, decripted);
+                }
+            }
+
             Console.WriteLine($"Decryption in {s.ElapsedMilliseconds}");
         }
+
+        [Test]
+        public void RsaAesStreamTest()
+        {
+            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
+
+            string data = "Hello world!";
+            byte[] dataBytes = EncryptionProvider.StringToBytes(data);
+
+            byte[] encryptedData = rsaAesEncription.EncryptTest(dataBytes);
+
+            byte[] decryptedData = rsaAesEncription.DecryptTest(encryptedData);
+
+            Assertions.CompareHash(dataBytes, decryptedData);
+        }
+
 
         static X509Certificate2 LoadCert()
         {

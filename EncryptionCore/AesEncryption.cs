@@ -231,7 +231,7 @@ namespace EncryptionCore
                 // Create a decrytor to perform the stream transform.
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-                encryptedStream.Position = IV.Length;
+                //encryptedStream.Position = IV.Length;
                 using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read, leaveOpen: false))
                 {
                     cryptoStream.CopyTo(dataStream);                               // decrypt

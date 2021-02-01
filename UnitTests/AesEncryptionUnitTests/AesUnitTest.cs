@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using UnitTestTools;
 
-namespace AesEncryptionUnitTests
+namespace RsaEncryptionUnitTests
 {
     [TestFixture]
     public class AesUnitTest
@@ -135,12 +135,7 @@ namespace AesEncryptionUnitTests
                     }
                     else
                     {
-                        Md5HashProvider hashProvider = new Md5HashProvider();
-
-                        ulong originalHash =  hashProvider.Hash(fileStream);
-                        ulong decryptedHash = hashProvider.Hash(decripted);
-
-                        Assert.IsTrue(originalHash== decryptedHash, $"Hash does not match, original: {originalHash} decrypted: {decryptedHash}");
+                        Assertions.CompareHash(fileStream, decripted);
                     }
                 }
             }

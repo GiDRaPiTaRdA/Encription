@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestTools", "UnitTests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AesEncryptionUnitTests", "UnitTests\AesEncryptionUnitTests\AesEncryptionUnitTests.csproj", "{32023AD9-A998-4756-AD3C-C3A9E78DB7D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RsaEncryptionUnitTests", "UnitTests\RsaEncryptionUnitTests\RsaEncryptionUnitTests.csproj", "{6194CE2A-6A4A-4FA7-9691-A7E4F30BACF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RsaAesEncryptionUnitTests", "UnitTests\RsaAesEncryptionUnitTests\RsaAesEncryptionUnitTests.csproj", "{6923000F-FA55-4052-9CA7-BAB9291397DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,14 @@ Global
 		{32023AD9-A998-4756-AD3C-C3A9E78DB7D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32023AD9-A998-4756-AD3C-C3A9E78DB7D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32023AD9-A998-4756-AD3C-C3A9E78DB7D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6194CE2A-6A4A-4FA7-9691-A7E4F30BACF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6194CE2A-6A4A-4FA7-9691-A7E4F30BACF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6194CE2A-6A4A-4FA7-9691-A7E4F30BACF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6194CE2A-6A4A-4FA7-9691-A7E4F30BACF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6923000F-FA55-4052-9CA7-BAB9291397DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6923000F-FA55-4052-9CA7-BAB9291397DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6923000F-FA55-4052-9CA7-BAB9291397DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6923000F-FA55-4052-9CA7-BAB9291397DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +54,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{05E9939F-EF26-46FC-BCFD-5A804C19BBA4} = {9E31D59B-2C37-44D0-B701-46527A4A66F4}
 		{32023AD9-A998-4756-AD3C-C3A9E78DB7D6} = {9E31D59B-2C37-44D0-B701-46527A4A66F4}
+		{6194CE2A-6A4A-4FA7-9691-A7E4F30BACF2} = {9E31D59B-2C37-44D0-B701-46527A4A66F4}
+		{6923000F-FA55-4052-9CA7-BAB9291397DD} = {9E31D59B-2C37-44D0-B701-46527A4A66F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF43925A-1BC3-4DEA-A915-333862F4E3DF}
