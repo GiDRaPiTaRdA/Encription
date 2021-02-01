@@ -68,6 +68,7 @@ namespace EncryptionCore
         public static X509Certificate2Collection LoadCertificate(StoreName storeName, StoreLocation location, string subjectName)
         {
             X509Store store = null;
+
             try
             {
                 store = new X509Store(storeName, location);
@@ -81,8 +82,14 @@ namespace EncryptionCore
             {
                 store?.Close();
             }
+        }
 
-
+        public static void ImportCertificate()
+        {
+            X509Certificate2 cert = new X509Certificate2("a.pfx", "password", X509KeyStorageFlags.MachineKeySet);
+            X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+            store.Open(OpenFlags.ReadWrite);
+            store.Add(cert);
         }
     }
 }

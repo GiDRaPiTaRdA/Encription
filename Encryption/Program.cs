@@ -1,17 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using EncryptionCore.Data;
 using EncryptionCore;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using CustomConsole;
+using Console = CustomConsole.Console;
+
 
 namespace Encryption
 {
     class Program
     {
+        //D:\фотки\Lambo\post\post\VideoCapture_20201019-212807.jpg
+
+        private static RsaAesEncription rsaAesEncription;
+
+        private static string Source { get; set; }
+
+        private static string encryptFile = @"data\encrypted.dat";
+        private static string decryptFile = @"data\decrypted.dat";
+
         static void Main(string[] args)
         {
+            rsaAesEncription = new RsaAesEncription(LoadCert("test1"));
+
+            Dictionary<string, Action> commands = new Dictionary<string, Action>()
+            {
+                {"set source", SetSource },
+                {"encrypt", Encrypt },
+                {"decrypt", Decrypt }
+            };
+
+            ConsoleMenu.Help(commands);
+
+            while (ConsoleMenu.Menu(commands));
+
             //LoadCertAndKeyType();
 
             //RsaTest();
@@ -23,11 +50,65 @@ namespace Encryption
             Console.ReadKey();
         }
 
+        private static void SetSource()
+        {
+            do
+            {
+                string source = Console.ReadType<string>();
+
+                if (source == "exit")
+                {
+                    return;
+                }
+
+                if (File.Exists(source))
+                {
+                    Source = source;
+                    Console.WriteLine($"Source succesfuly set {source}",ConsoleColor.Green);
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine($"Source file {source} not found", ConsoleColor.Red);
+                }
+
+
+            }
+            while (true);
+
+        }
+
+        private static void Encrypt()
+        {
+            Stopwatch s = Stopwatch.StartNew();
+
+            using (FileStream original = File.Open(Source, FileMode.Open))
+            using (FileStream encrypted = File.Open(encryptFile, FileMode.Create))
+            {
+                rsaAesEncription.EncryptStream(original, encrypted);
+            }
+
+            Console.WriteLine($"Encryption finished in {s.ElapsedMilliseconds}");
+        }
+
+        private static void Decrypt()
+        {
+            Stopwatch s = Stopwatch.StartNew();
+
+            using (FileStream encrypted = File.Open(encryptFile, FileMode.Open))
+            using (FileStream decripted = File.Open(decryptFile, FileMode.Create))
+            {
+                rsaAesEncription.DecryptStream(encrypted, decripted);
+            }
+
+            Console.WriteLine($"Decryption finished in {s.ElapsedMilliseconds}");
+        }
+
         public static void RsaAesBigDataStreamTest()
         {
             Stopwatch s = Stopwatch.StartNew();
 
-            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
+            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert("test"));
 
             string path = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -58,9 +139,9 @@ namespace Encryption
             Console.WriteLine($"Decryption in {s.ElapsedMilliseconds}");
         }
 
-        static X509Certificate2 LoadCert()
+        static X509Certificate2 LoadCert(string certName)
         {
-            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "EgyptAC")[0];
+            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, certName)[0];
             return cert;
         }
     }
