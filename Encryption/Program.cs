@@ -16,37 +16,11 @@ namespace Encryption
 
             //RsaTest();
 
-            //AesTest();
+            //RsaAesStreamTest();
 
-            //AesStreamTest();
-
-            //AesBigDataStreamTest();
-
-            RsaAesBigDataStreamTest();
+            //RsaAesBigDataStreamTest();
 
             Console.ReadKey();
-        }
-
-        static void AesTest()
-        {
-            string original = "Hello world!";
-
-            using (var random = new RNGCryptoServiceProvider())
-            {
-                var key = new byte[16];
-                random.GetBytes(key);
-
-                byte[] encrypted = AesEncryption.EncryptText(original, key);
-
-                string decrypted = AesEncryption.DecryptText(encrypted, key);
-
-                //Display the original data and the decrypted data.
-                Console.WriteLine("Original:   {0}", original);
-                Console.WriteLine("Key:   {0}", Convert.ToBase64String(key));
-                Console.WriteLine("Encrypted (b64-encode): {0}", Convert.ToBase64String(encrypted));
-                Console.WriteLine("Round Trip: {0}", decrypted);
-
-            }
         }
 
         static void RsaTest()
@@ -63,87 +37,55 @@ namespace Encryption
             Console.ReadLine();
         }
 
-        static void AesStreamTest()
-        {
-            using (var random = new RNGCryptoServiceProvider())
-            {
-                var key = new byte[16];
-                random.GetBytes(key);
+        #region Rsa Aes 
 
-                using (MemoryStream encrypted = new MemoryStream())
-                {
-                    byte[] dataIn = AesEncryption.StringToBytes("Hello world!");
-
-                    using (MemoryStream original = new MemoryStream(dataIn))
-                    {
-                        using (MemoryStream decripted = new MemoryStream())
-                        {
-                            AesEncryption.EncryptStream(original, encrypted, key);
-
-                            AesEncryption.DecryptStream(encrypted, decripted, key);
-
-                            string decrypted = AesEncryption.BytesToString(decripted.ToArray());
-
-                            //string decrypted = AesEncryption.DecryptText(encrypted.ToArray(), key);
-                        }
-                    }
-                }
-            }
-        }
-
-
-        static void AesBigDataStreamTest()
+        static void RsaAesBigDataStreamTest()
         {
             Stopwatch s = Stopwatch.StartNew();
 
-            byte[] key;
-            using (RNGCryptoServiceProvider random = new RNGCryptoServiceProvider())
-            {
-                key = new byte[16];
-                random.GetBytes(key);
-            }
+            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
 
-            using (FileStream original = File.Open(@"data\data.rar", FileMode.Open))
-            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Create))
+            string dataFile = @"data\test.txt";
+            string extention = Path.GetExtension(dataFile);
+
+            string encriptedFile = $@"data\encrypted{extention}";
+            string decriptedFile = $@"data\decrypted{extention}";
+
+            using (FileStream original = File.Open(dataFile, FileMode.Open))
+            using (FileStream encrypted = File.Open(encriptedFile, FileMode.Create))
             {
-                AesEncryption.EncryptStream(original, encrypted, key);
+                rsaAesEncription.EncryptStream(original, encrypted);
             }
 
             Console.WriteLine($"Encryption in {s.ElapsedMilliseconds}");
             s.Restart();
 
-            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Open))
-            using (FileStream decripted = File.Open(@"data\decripted.rar", FileMode.Create))
-            {
-                AesEncryption.DecryptStream(encrypted, decripted, key);
-            }
-
-            Console.WriteLine($"Decryption in {s.ElapsedMilliseconds}");
-
-        }
-
-        static void RsaAesBigDataStreamTest()
-        {
-            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
-
-            using (FileStream original = File.Open(@"data\data.rar", FileMode.Open))
-            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Create))
-            {
-                rsaAesEncription.EncryptStream(original,encrypted);
-            }
-
-            using (FileStream encrypted = File.Open(@"data\encripted.cript", FileMode.Open))
-            using (FileStream decripted = File.Open(@"data\decripted.rar", FileMode.Create))
+            using (FileStream encrypted = File.Open(encriptedFile, FileMode.Open))
+            using (FileStream decripted = File.Open(decriptedFile, FileMode.Create))
             {
                 rsaAesEncription.DecryptStream(encrypted, decripted);
             }
+
+            Console.WriteLine($"Decryption in {s.ElapsedMilliseconds}");
         }
 
 
-        static void LoadCertAndKeyType()
+        static void RsaAesStreamTest()
         {
-            KeyType keyType = EncryptionProvider.GetCertificateType(LoadCert());
+            Stopwatch s = Stopwatch.StartNew();
+
+            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
+
+
+            string data = "Hello world!";
+            byte[] dataBytes = EncryptionProvider.StringToBytes(data);
+
+            byte[] encryptedData = rsaAesEncription.EncryptTest(dataBytes);
+
+            byte[] decryptedData = rsaAesEncription.DecryptTest(encryptedData);
         }
+
+        #endregion
 
         static X509Certificate2 LoadCert()
         {

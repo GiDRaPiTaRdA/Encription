@@ -28,11 +28,7 @@ namespace EncryptionCore
         public bool CanDecrypt() => cert.HasPrivateKey;
 
 
-
-
-      
-
-        protected static string BytesToString(byte[] bytes)
+        public static string BytesToString(byte[] bytes)
         {
             UnicodeEncoding byteConverter = new UnicodeEncoding();
 
@@ -41,7 +37,7 @@ namespace EncryptionCore
             return text;
         }
 
-        protected static byte[] StringToBytes(string text)
+        public static byte[] StringToBytes(string text)
         {
             UnicodeEncoding byteConverter = new UnicodeEncoding();
 
