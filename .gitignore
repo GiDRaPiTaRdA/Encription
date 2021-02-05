@@ -12,6 +12,7 @@
 
 # CommonsBin libraries folder exclude from tracking
 CommonsBin/
+Certificates/
 
 # Build results
 [Dd]ebug/
