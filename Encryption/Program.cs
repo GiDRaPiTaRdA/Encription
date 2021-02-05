@@ -57,10 +57,6 @@ namespace Encryption
         {
             X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0];
 
-            //X509Certificate2 cert = new X509Certificate2(
-            //    File.ReadAllBytes(@"C:\Users\Maxim\source\repos\VisualStudio\Encription\EncryptionCore\Cert\Certificates\test.pfx"),
-            //    "1");
-
             using (RSA rsa = cert.GetRSAPublicKey())
             {
                 CngKeyUsages s = ((RSACng)rsa).Key.KeyUsage;

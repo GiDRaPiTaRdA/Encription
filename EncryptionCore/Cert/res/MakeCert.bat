@@ -3,28 +3,26 @@ set /p certName="Enter certificate name: "
 set /p months="Enter trial in months: "
 set /p password="Enter password: "
 set pass=%~dp0Certificates
-set root=%pass%\%certName%
-md %root%
+md %pass%
 
 makecert.exe ^
 -n "CN=%certName%" ^
 -r ^
 -pe ^
--a sha1 ^
+-a sha512 ^
 -m %months% ^
--sky exchange ^
 -len 4096 ^
 -cy authority ^
--sv %root%\%certName%.pvk ^
-%root%\%certName%.cer
+-sv %pass%\%certName%.pvk ^
+%pass%\%certName%.cer
 
 pvk2pfx.exe ^
--pvk %root%\%certName%.pvk ^
--spc %root%\%certName%.cer ^
--pfx %root%\%certName%.pfx ^
+-pvk %pass%\%certName%.pvk ^
+-spc %pass%\%certName%.cer ^
+-pfx %pass%\%certName%.pfx ^
 -po %password%
 
-pause
+explorer.exe %pass%
 
-explorer.exe %root%
+pause
 
