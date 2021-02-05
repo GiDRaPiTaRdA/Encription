@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,14 +15,14 @@ namespace EncryptionCore
 
         public RsaAesEncription(X509Certificate2 cert)
         {
-            this.RsaEncryptionProvider = new RsaEncryptionProvider(cert);
+            this.RsaEncryptionProvider = new RsaEncryptionProvider(cert,RSAEncryptionPadding.OaepSHA512);
         }
 
         public byte[] EncryptText(string data) =>
-            Encrypt(EncryptionProvider.StringToBytes(data));
+            this.Encrypt(EncryptionProvider.StringToBytes(data));
 
         public string DecryptText(byte[] encryptedData) =>
-            EncryptionProvider.BytesToString(Decrypt(encryptedData));
+            EncryptionProvider.BytesToString(this.Decrypt(encryptedData));
 
         public byte[] Encrypt(byte[] data)
         {
@@ -29,7 +30,7 @@ namespace EncryptionCore
             {
                 using (MemoryStream encryptedStream = new MemoryStream())
                 {
-                    EncryptStream(dataStream, encryptedStream);
+                    this.EncryptStream(dataStream, encryptedStream);
 
                     return encryptedStream.ToArray();
                 }
@@ -45,7 +46,7 @@ namespace EncryptionCore
 
             byte[] aesEncrypted = AesEncryption.EncryptTest(data, key);
 
-            byte[] rsaAesEncrypted = ConcatArrays(encryptedKey,aesEncrypted);
+            byte[] rsaAesEncrypted = this.ConcatArrays(encryptedKey,aesEncrypted);
 
             return rsaAesEncrypted;
         }
@@ -78,7 +79,7 @@ namespace EncryptionCore
             {
                 using (MemoryStream dataStream = new MemoryStream())
                 {
-                    DecryptStream(encryptedStream, dataStream);
+                    this.DecryptStream(encryptedStream, dataStream);
 
                     return dataStream.ToArray();
                 }

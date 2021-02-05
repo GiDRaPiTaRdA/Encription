@@ -9,8 +9,9 @@ makecert.exe ^
 -n "CN=%certName%" ^
 -r ^
 -pe ^
--a sha512 ^
+-a sha1 ^
 -m %months% ^
+-sky exchange ^
 -len 4096 ^
 -cy authority ^
 -sv %pass%\%certName%.pvk ^
@@ -21,8 +22,6 @@ pvk2pfx.exe ^
 -spc %pass%\%certName%.cer ^
 -pfx %pass%\%certName%.pfx ^
 -po %password%
-
-explorer.exe %pass%
 
 pause
 

@@ -19,20 +19,23 @@ namespace Encryption
 
         private static RsaAesEncription rsaAesEncription;
 
-        private static string Source { get; set; }
+        private static string Source { get; set; } = @"data\vpn.rar";
 
         private static string encryptFile = @"data\encrypted.dat";
-        private static string decryptFile = @"data\decrypted.dat";
+        private static string decryptFile = @"data\decrypted.rar";
 
         static void Main(string[] args)
         {
-            rsaAesEncription = new RsaAesEncription(LoadCert("test1"));
+            rsaAesEncription = new RsaAesEncription(LoadCert("test"));
 
             Dictionary<string, Action> commands = new Dictionary<string, Action>()
             {
                 {"set source", SetSource },
                 {"encrypt", Encrypt },
-                {"decrypt", Decrypt }
+                {"decrypt", Decrypt },
+                {"e", Encrypt },
+                {"d", Decrypt },
+                {"t", Test }
             };
 
             ConsoleMenu.Help(commands);
@@ -48,6 +51,20 @@ namespace Encryption
             RsaAesBigDataStreamTest();
 
             Console.ReadKey();
+        }
+
+        private static void Test()
+        {
+            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "test")[0];
+
+            //X509Certificate2 cert = new X509Certificate2(
+            //    File.ReadAllBytes(@"C:\Users\Maxim\source\repos\VisualStudio\Encription\EncryptionCore\Cert\Certificates\test.pfx"),
+            //    "1");
+
+            using (RSA rsa = cert.GetRSAPublicKey())
+            {
+                CngKeyUsages s = ((RSACng)rsa).Key.KeyUsage;
+            }
         }
 
         private static void SetSource()

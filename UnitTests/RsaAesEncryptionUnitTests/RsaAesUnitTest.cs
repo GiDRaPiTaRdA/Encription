@@ -13,27 +13,26 @@ namespace RsaAesEncryptionUnitTests
     [TestFixture]
     public class RsaAesUnitTest
     {
-        public string original = "Hello world!";
+        private readonly TestDataProvider data = new TestDataProvider();
 
         [Test]
-        public void RsaAesBigDataStreamTest()
+        [TestCase("test", "1111")]
+        public void RsaAesBigDataStreamTest(string certName, string password)
         {
+            // Data
+            X509Certificate2 cert = this.data.GetTestCertificate(certName, password);
+
+
+            Directory.CreateDirectory(this.data.DataRoot);
+
             Stopwatch s = Stopwatch.StartNew();
 
-            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
+            RsaAesEncription rsaAesEncription = new RsaAesEncription(cert);
 
-            string path = AppDomain.CurrentDomain.BaseDirectory;
-
-            string dir = $@"{path}data\rsaaes";
-            string dataFile = $@"{dir}\Video.rar";
-            string extention = Path.GetExtension(dataFile);
-
-            string encriptedFile = $@"{dir}\encrypted{extention}";
-            string decriptedFile = $@"{dir}\decrypted{extention}";
-
+        
             // Encrypt
-            using (FileStream original = File.Open(dataFile, FileMode.Open))
-            using (FileStream encrypted = File.Open(encriptedFile, FileMode.Create))
+            using (FileStream original = File.Open(this.data.DataFile, FileMode.Open))
+            using (FileStream encrypted = File.Open(this.data.EncryptedFile, FileMode.Create))
             {
                 rsaAesEncription.EncryptStream(original, encrypted);
             }
@@ -42,15 +41,15 @@ namespace RsaAesEncryptionUnitTests
             s.Restart();
 
             // Decrypt
-            using (FileStream encrypted = File.Open(encriptedFile, FileMode.Open))
-            using (FileStream decripted = File.Open(decriptedFile, FileMode.Create))
+            using (FileStream encrypted = File.Open(this.data.EncryptedFile, FileMode.Open))
+            using (FileStream decripted = File.Open(this.data.DecryptedFile, FileMode.Create))
             {
                 rsaAesEncription.DecryptStream(encrypted, decripted);
             }
 
             // Check
-            using (FileStream original = File.Open(dataFile, FileMode.Open))
-            using (FileStream decripted = File.Open(decriptedFile, FileMode.Open))
+            using (FileStream original = File.Open(this.data.DataFile, FileMode.Open))
+            using (FileStream decripted = File.Open(this.data.DecryptedFile, FileMode.Open))
             {
                 if (original.Length != decripted.Length)
                 {
@@ -66,25 +65,22 @@ namespace RsaAesEncryptionUnitTests
         }
 
         [Test]
-        public void RsaAesStreamTest()
+        [TestCase("test", "1111")]
+        public void RsaAesStreamTest(string certName, string password)
         {
-            RsaAesEncription rsaAesEncription = new RsaAesEncription(LoadCert());
+            // Data
+            X509Certificate2 cert = this.data.GetTestCertificate(certName, password);
 
-            string data = "Hello world!";
-            byte[] dataBytes = EncryptionProvider.StringToBytes(data);
+
+            RsaAesEncription rsaAesEncription = new RsaAesEncription(cert);
+
+            byte[] dataBytes = EncryptionProvider.StringToBytes(this.data.DataFile);
 
             byte[] encryptedData = rsaAesEncription.EncryptTest(dataBytes);
 
             byte[] decryptedData = rsaAesEncription.DecryptTest(encryptedData);
 
             Assertions.CompareHash(dataBytes, decryptedData);
-        }
-
-
-        static X509Certificate2 LoadCert()
-        {
-            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "EgyptAC")[0];
-            return cert;
         }
     }
 }

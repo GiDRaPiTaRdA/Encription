@@ -1,65 +1,69 @@
-﻿
-using EncryptionCore;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using EncryptionCore;
+using NUnit.Framework;
 using UnitTestTools;
 
-namespace RsaEncryptionUnitTests
+namespace AesEncryptionUnitTests
 {
     [TestFixture]
     public class AesUnitTest
     {
-        public string original = "Hello world!";
+        private readonly TestDataProvider data = new TestDataProvider();
 
         [Test]
         public void AesTest()
         {
-            byte[] data = EncryptionProvider.StringToBytes(original);
+            byte[] textData = EncryptionProvider.StringToBytes(this.data.TextData);
 
-            var key = AesEncryption.GenerateKey();
+            byte[] key = AesEncryption.GenerateKey();
 
-            byte[] encrypted = AesEncryption.EncryptTest(data, key);
+            byte[] encrypted = AesEncryption.EncryptTest(textData, key);
 
             byte[] decrypted = AesEncryption.DecryptTest(encrypted, key);
 
-            Assert.IsTrue(Enumerable.SequenceEqual(data, decrypted));
+            Assert.IsTrue(textData.SequenceEqual(decrypted));
         }
 
         [Test]
         public void Aes()
         {
-            byte[] data = EncryptionProvider.StringToBytes(original);
+            byte[] data = EncryptionProvider.StringToBytes(this.data.TextData);
 
-            var key = AesEncryption.GenerateKey();
+            byte[] key = AesEncryption.GenerateKey();
 
             byte[] encrypted = AesEncryption.Encrypt(data, key);
 
             byte[] decrypted = AesEncryption.Decrypt(encrypted, key);
 
-            Assert.IsTrue(Enumerable.SequenceEqual(data, decrypted));
+            Assert.IsTrue(data.SequenceEqual(decrypted));
         }
 
         [Test]
         public void AesTextTest()
         {
-            var key = AesEncryption.GenerateKey();
+            byte[] key = AesEncryption.GenerateKey();
 
-            byte[] encrypted = AesEncryption.EncryptText(original, key);
+            byte[] encrypted = AesEncryption.EncryptText(this.data.TextData, key);
 
             string decrypted = AesEncryption.DecryptText(encrypted, key);
 
-            Assert.IsTrue(original == decrypted);
+            Assert.IsTrue(this.data.TextData == decrypted);
         }
 
         [Test]
         public void AesStreamTest()
         {
-            byte[] dataIn = AesEncryption.StringToBytes(original);
+            // Data
+            Directory.CreateDirectory(this.data.DataRoot);
+
+            byte[] dataIn = AesEncryption.StringToBytes(this.data.TextData);
 
             byte[] key = AesEncryption.GenerateKey();
+
+
 
             byte[] encryptedBytes;
 
@@ -85,28 +89,22 @@ namespace RsaEncryptionUnitTests
                 }
             }
 
-            Assert.IsTrue(Enumerable.SequenceEqual(dataIn, decryptedBytes));
+            Assert.IsTrue(dataIn.SequenceEqual(decryptedBytes));
         }
 
         [Test]
         public void AesBigDataStreamTest()
         {
+            Directory.CreateDirectory(this.data.DataRoot);
+
+
             Stopwatch s = Stopwatch.StartNew();
 
             byte[] key = AesEncryption.GenerateKey();
 
-            string path = AppDomain.CurrentDomain.BaseDirectory;
-
-            string dir = $@"{path}data\aes";
-            string dataFile = $@"{dir}\Video.rar";
-            string extention = Path.GetExtension(dataFile);
-
-            string encriptedFile = $@"{dir}\encrypted{extention}";
-            string decriptedFile = $@"{dir}\decrypted{extention}";
-
             // Encrypt
-            using (FileStream original = File.Open(dataFile, FileMode.Open))
-            using (FileStream encrypted = File.Open(encriptedFile, FileMode.Create))
+            using (FileStream original = File.Open(this.data.DataFile, FileMode.Open))
+            using (FileStream encrypted = File.Open(this.data.EncryptedFile, FileMode.Create))
             {
                 AesEncryption.EncryptStream(original, encrypted, key);
             }
@@ -115,8 +113,8 @@ namespace RsaEncryptionUnitTests
             s.Restart();
 
             // Decrypt
-            using (FileStream encrypted = File.Open(encriptedFile, FileMode.Open))
-            using (FileStream decripted = File.Open(decriptedFile, FileMode.Create))
+            using (FileStream encrypted = File.Open(this.data.EncryptedFile, FileMode.Open))
+            using (FileStream decripted = File.Open(this.data.DecryptedFile, FileMode.Create))
             {
                 AesEncryption.DecryptStream(encrypted, decripted, key);
             }
@@ -125,9 +123,9 @@ namespace RsaEncryptionUnitTests
 
 
             // Check
-            using (FileStream fileStream = File.Open(dataFile, FileMode.Open))
+            using (FileStream fileStream = File.Open(this.data.DataFile, FileMode.Open))
             {
-                using (FileStream decripted = File.Open(decriptedFile, FileMode.Open))
+                using (FileStream decripted = File.Open(this.data.DecryptedFile, FileMode.Open))
                 {
                     if (fileStream.Length != decripted.Length)
                     {

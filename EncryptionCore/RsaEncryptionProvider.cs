@@ -21,10 +21,10 @@ namespace EncryptionCore
         }
 
         public override byte[] Encrypt(byte[] dataToEncrypt) =>
-            Encrypt(cert, dataToEncrypt, padding);
+            Encrypt(this.cert, dataToEncrypt, this.padding);
 
         public override byte[] Decrypt(byte[] encryptedData) =>
-            Decrypt(cert, encryptedData, padding);
+            Decrypt(this.cert, encryptedData, this.padding);
 
 
         public static byte[] Encrypt(X509Certificate2 cert, byte[] data, RSAEncryptionPadding padding)

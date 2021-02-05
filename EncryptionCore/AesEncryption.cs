@@ -211,13 +211,13 @@ namespace EncryptionCore
             }
         }
 
-        public static void DecryptStream(Stream encryptedStream, Stream dataStream, byte[] Key)
+        public static void DecryptStream(Stream encryptedStream, Stream dataStream, byte[] key)
         {
             // Create an Aes object 
             // with the specified key and IV. 
             using (Aes aesAlg = Aes.Create())
             {
-                aesAlg.Key = Key;
+                aesAlg.Key = key;
 
                 byte[] IV = new byte[aesAlg.BlockSize / 8];
 

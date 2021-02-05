@@ -5,7 +5,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using EncryptionCore.Data;
 using UnitTestTools;
 
 namespace RsaEncryptionUnitTests
@@ -13,14 +16,19 @@ namespace RsaEncryptionUnitTests
     [TestFixture]
     public class RsaUnitTest
     {
-        public string original = "Hello world!";
+        private readonly TestDataProvider data = new TestDataProvider();
 
         [Test]
-        public void RsaTest()
+        [TestCase("test", "1111")]
+        public void RsaTest(string certName, string password)
         {
-            RsaEncryptionProvider rsaEncryption = new RsaEncryptionProvider(LoadCert());
+            // Data
+            X509Certificate2 cert = this.data.GetTestCertificate(certName, password);
 
-            byte[] originalBytes = EncryptionProvider.StringToBytes(original);
+            byte[] originalBytes = EncryptionProvider.StringToBytes(this.data.TextData);
+
+
+            RsaEncryptionProvider rsaEncryption = new RsaEncryptionProvider(cert, RSAEncryptionPadding.OaepSHA512);
 
             byte[] encrypted = rsaEncryption.Encrypt(originalBytes);
 
@@ -30,23 +38,20 @@ namespace RsaEncryptionUnitTests
         }
 
         [Test]
-        public void RsaTextTest()
+        [TestCase("test", "1111")]
+        public void RsaTextTest(string certName, string password)
         {
-            RsaEncryptionProvider rsaEncryption = new RsaEncryptionProvider(LoadCert());
+            // Data
+            X509Certificate2 cert = this.data.GetTestCertificate(certName, password);
 
-            byte[] originalBytes = EncryptionProvider.StringToBytes(original);
 
-            byte[] encrypted = rsaEncryption.EncryptText(original);
+            RsaEncryptionProvider rsaEncryption = new RsaEncryptionProvider(cert, RSAEncryptionPadding.OaepSHA512);
+
+            byte[] encrypted = rsaEncryption.EncryptText(this.data.TextData);
 
             string decrypted = rsaEncryption.DecryptText(encrypted);
 
-            Assert.IsTrue(original == decrypted);
-        }
-
-        static X509Certificate2 LoadCert()
-        {
-            X509Certificate2 cert = EncryptionProvider.LoadCertificate(StoreName.My, StoreLocation.CurrentUser, "EgyptAC")[0];
-            return cert;
+            Assert.IsTrue(this.data.TextData == decrypted);
         }
     }
 }

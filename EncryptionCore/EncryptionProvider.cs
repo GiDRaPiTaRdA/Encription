@@ -25,7 +25,7 @@ namespace EncryptionCore
         public string DecryptText(byte[] ecryptedData) =>
             BytesToString(this.Decrypt(ecryptedData));
 
-        public bool CanDecrypt() => cert.HasPrivateKey;
+        public bool CanDecrypt() => this.cert.HasPrivateKey;
 
 
         public static string BytesToString(byte[] bytes)
@@ -63,6 +63,14 @@ namespace EncryptionCore
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        public static CngKeyUsages GetUsages(X509Certificate2 pk)
+        {
+            RSA rsa = pk.GetRSAPrivateKey();
+            CngKeyUsages s = ((RSACng)rsa).Key.KeyUsage;
+
+            return s;
         }
 
         public static X509Certificate2Collection LoadCertificate(StoreName storeName, StoreLocation location, string subjectName)
